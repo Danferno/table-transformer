@@ -820,39 +820,39 @@ class TableExtractionPipeline(object):
         return extracted_tables
 
 
-def output_result(key, val, args, img, img_file):
+def output_result(key, val, args, img, img_file, img_format='.jpg'):
     if key == 'objects':
         if args.verbose:
             print(val)
-        out_file = img_file.replace(".jpg", "_objects.json")
+        out_file = img_file.replace(img_format, "_objects.json")
         with open(os.path.join(args.out_dir, out_file), 'w') as f:
             json.dump(val, f)
         if args.visualize:
-            out_file = img_file.replace(".jpg", "_fig_tables.jpg")
+            out_file = img_file.replace(img_format, f"_fig_tables{img_format}")
             out_path = os.path.join(args.out_dir, out_file)
             visualize_detected_tables(img, val, out_path)
     elif not key == 'image' and not key == 'tokens':
         for idx, elem in enumerate(val):
             if key == 'crops':
                 for idx, cropped_table in enumerate(val):
-                    out_img_file = img_file.replace(".jpg", "_table_{}.jpg".format(idx))
+                    out_img_file = img_file.replace(img_format, f"_table_{idx}{img_format}")
                     cropped_table['image'].save(os.path.join(args.out_dir,
                                                                 out_img_file))
-                    out_words_file = out_img_file.replace(".jpg", "_words.json")
+                    out_words_file = out_img_file.replace(img_format, "_words.json")
                     with open(os.path.join(args.out_dir, out_words_file), 'w') as f:
                         json.dump(cropped_table['tokens'], f)
             elif key == 'cells':
-                out_file = img_file.replace(".jpg", "_{}_objects.json".format(idx))
+                out_file = img_file.replace(img_format, "_{}_objects.json".format(idx))
                 with open(os.path.join(args.out_dir, out_file), 'w') as f:
                     json.dump(elem, f)
                 if args.verbose:
                     print(elem)
                 if args.visualize:
-                    out_file = img_file.replace(".jpg", "_fig_cells.jpg")
+                    out_file = img_file.replace(img_format, f"_fig_cells{img_format}")
                     out_path = os.path.join(args.out_dir, out_file)
                     visualize_cells(img, elem, out_path)
             else:
-                out_file = img_file.replace(".jpg", "_{}.{}".format(idx, key))
+                out_file = img_file.replace(img_format, f"_{idx}.{key}")
                 with open(os.path.join(args.out_dir, out_file), 'w') as f:
                     f.write(elem)
                 if args.verbose:
