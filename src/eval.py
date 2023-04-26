@@ -487,7 +487,7 @@ def eval_tsr_sample(target, pred_logits, pred_bboxes, mode):
 
 def visualize(args, target, pred_logits, pred_bboxes):
     img_filepath = target["img_path"]
-    img_filename = img_filepath.split("/")[-1]
+    img_filename = os.path.basename(img_filepath)     # MODIFIEDJW
 
     bboxes_out_filename = img_filename.replace(".jpg", "_bboxes.jpg")
     bboxes_out_filepath = os.path.join(args.debug_save_dir, bboxes_out_filename)
@@ -638,7 +638,7 @@ def evaluate(args, model, criterion, postprocessors, data_loader, base_ds, devic
                     if not k == 'img_path':
                         target[k] = v.cpu()
                 img_filepath = target["img_path"]
-                img_filename = img_filepath.split("/")[-1]
+                img_filename = os.path.basename(img_filepath)       # MODIFIEDJW
                 img_words_filepath = os.path.join(args.table_words_dir, img_filename.replace(".jpg", "_words.json"))
                 target["img_words_path"] = img_words_filepath
             targets_collection += targets
